@@ -8,7 +8,12 @@ A preview of the score can be heard by mean of the web audio api thus is not nec
 To use it on a local machine just download it (preserving folders structure) and open the etpr.html file with a web browser (Chrome/Cromium are preferred).
 
 
-##Bugs/To Do
+## Bugs/To Do
 
 The software is in working condition but code can be rewritten in a better form. Some bugs can be present.
 Feel free to fork and improve it.
+
+
+## Try it
+
+[Via this link](https://htmlpreview.github.io/?https://github.com/triceratupuz/etpr/blob/master/etpr.html) 
