@@ -1,0 +1,187 @@
+body {
+	font-family: "arial";
+	//font-size: 1.1em;
+
+	background-color: #F2F3F4;
+}
+
+
+h1 {
+	font-size: 1.5em;
+}
+
+h2 {
+	font-size: 1em;
+}
+
+
+
+div {
+	position: relative;
+	display: inline-block;
+}
+
+canvas {
+	
+	position:absolute;
+    left:0px;
+    top:0px;
+	border:1px solid #000000;
+}
+
+
+select {
+	width:100%;
+	height: 2em;
+	font-size: 1em;
+	
+}
+
+input[type=button] {
+	font-family: "arial";
+	font-size: 1em;
+	//font-size: 80%;
+	width:100%;
+	height: 2em;
+	border-style:solid;
+    border-width: 1px;
+    border-color:#000000;
+	background-color: #bbbbbb;	
+}
+
+
+
+
+input[type=number] {
+	font-family: "arial";
+	font-size:  1.5em;
+	width:100%;
+	height: 1em;
+}
+
+input[type=text] {
+	font-family: "arial";
+	font-size:  1.5em;
+	width:100%;
+	height: 1em;	
+}
+
+
+#pianoroll {
+	style="z-index: 1;
+}
+
+#timeDivision {
+	style="z-index: 2;
+	background:transparent;
+}
+
+
+#timeScroll {
+	style="z-index: 3;
+	background:transparent;
+	pointer-events: none;
+	
+}
+
+#notesCanvas {
+	style="z-index: 4;
+	background:transparent;
+}
+
+
+
+
+#pfields {
+  width:99%;
+  display: inline-grid;
+  grid-template-columns: 10% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6%;
+}
+
+input[type=button].copybuttonPf{
+	width:47%;
+	font-size:0.5em;
+}
+
+
+.header_nav_div{
+	width:100%;
+	
+}
+
+label.label_nav{
+	width: 7%;
+	float:left;
+}
+
+label.label_nav_bold{
+	display: block;
+	width: 7%;
+	float:left;
+	font-weight: bold;
+	 text-align:right;
+}
+
+input[type=button].button_nav{
+	width: 7%;
+	float:left;
+}
+
+input[type=text].text_nav{
+	width: 7%;
+	float:left;
+}
+
+input[type=number].number_nav{
+	width: 7%;
+	float:left;
+}
+
+select.select_nav {
+	width: 7%;
+	float:left;
+} 
+
+
+/*
+Inputfile mods
+customize with https://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/
+*/
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+	float:left;
+}
+
+
+.inputfile + label {
+	width:7%;
+	height: 1.9em;
+	font-family: "arial";
+	font-size:  1em;
+	text-align: center;
+	color: black;
+    background-color: #BBBBBB;
+    display: inline-block;
+
+	border-style:solid;
+    border-width: 1px;
+    border-color:#000000;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: red;
+}
+
+#inputFileNameToSaveAs {
+	width:28%;
+	height: 1em;
+	font-size: 1em;
+	float:left;
+}

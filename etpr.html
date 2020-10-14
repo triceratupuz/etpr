@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ETPR</title>
+<link rel="stylesheet" type="text/css" href="css/etpr.css">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"><!--avoid scaling-->
+</head>
+<body>
+
+
+<div class="header_nav_div" id="menu">
+<label class="label_nav_bold">Actual File:</label>
+<input type="text"  id="inputFileNameToSaveAs">
+	<input type="button" class="button_nav" value="File" onclick="openArgument(value)">
+	<input type="button" class="button_nav" value="Edit" onclick="openArgument(value)">
+	<input type="button" class="button_nav" value="Tuning" onclick="openArgument(value)">
+	<input type="button" class="button_nav" value="Time" onclick="openArgument(value)">
+	<input type="button" class="button_nav" value="Play" onclick="openArgument(value)">
+	<input type="button" class="button_nav" value="Instrument" onclick="openArgument(value)">
+	<label class="label_nav"><a href="help/etprHelp.html"target="_blank">help</a></label>
+</div>
+
+<div class="header_nav_div" id="Filediv">
+	<label class="label_nav_bold">File:</label>
+	<!-- customize with https://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/-->
+	<input type="file" class="inputfile" name="file" id="fileToLoad" >
+	<label for="fileToLoad" class="label_nav">Select file</label>
+	<input type="button" class="button_nav" value="Load" onclick="loadFileAsText()">
+	<input type="button" class="button_nav" value="Save" onclick="saveTextAsFile()">
+</div>
+
+<div class="header_nav_div" id="Editdiv">	
+	<label class="label_nav_bold">Edit:</label>
+	<input type="button" class="button_nav" value="Copy" onclick="copySelected('n')">
+	<input type="button" class="button_nav" value="Cut" onclick="copySelected('c')">
+	<input type="button" class="button_nav" id="pastebtn" value="Paste" onclick="pasteButton()">
+	<input type="button" class="button_nav" id="deselbtn" value="Deselect" onclick="deselectAll()">
+	<input type="button" class="button_nav" id="seleftfhte" value="Sel toEnd" onclick="selectFromHereToEnd('a')" title="select all Instruments">
+	<input type="button" class="button_nav" id="seleftfhte" value="Sel I toEnd" onclick="selectFromHereToEnd('i')" title="select only current Instrument">
+	<input type="button" class="button_nav" id="seleftfhtn" value="Sel to:" onclick="selectFromHereToN('a')" title="select all Instruments">
+	<input type="button" class="button_nav" id="seleftfhtn" value="Sel I to:" onclick="selectFromHereToN('i')" title="select only current Instrument">
+	<input type="text" class="text_nav" id="seleftfhtnn" min="0" step="0.001" value="1000" title="last duration to select for Sel_to and Sel_I_to">
+	<input type="button" class="button_nav" id="changeinstr" value="ChangeInst" onclick="tocurrentinstr()" title="all selected notes to current instrument">
+</div>
+
+<div class="header_nav_div" id="Tuningdiv">
+	<label class="label_nav_bold">Tuning:</label>
+	<input type="number" class="number_nav" id="notesOctave" min="1" max="100" step="1" value="12">
+	<label class="label_nav">Number of notes</label>
+	<input type="number" class="number_nav" id="octaveMultiplier" min="1" max="10" step="0.0001" value="2.0">
+	<label class="label_nav">Octave multiplier</label>
+	<input type="number" class="number_nav" id="CFrequency" min="1" max="10" step="0.0001" value="8.1758">
+	<label class="label_nav">C freq (lowest)</label>
+</div>
+
+<div class="header_nav_div" id="Timediv">	
+	<label class="label_nav_bold">Time:</label>
+	<select class="select_nav" id="divBeat">
+		<!-- see below for options-->
+	</select>
+	<label class="label_nav">Division</label>
+	
+	<select class="select_nav" id="divBeatStart">
+		<option value="0" selected="selected">begin</option>
+		<option value="1">start selected</option>
+		<option value="2">end selected</option>
+	</select>
+	<label class="label_nav">Grid start</label>
+	
+	<input type="number" class="number_nav"  id="timeMultiplier" min="0.001" max="10" step="0.001" value="2.00" onchange="settimeMultipRatio(value)">
+	<label class="label_nav">TimeBase</label>
+	<input type="checkbox" id="quantize" checked>Q
+</div>
+
+<div class="header_nav_div" id="Playdiv">	
+	<label class="label_nav_bold">Play:</label>
+	<input type="button" class="button_nav" id="pfh" value="PlayHere" onclick="">
+	<input type="button" class="button_nav" id="pfs" value="PlayStart" onclick="">
+	<input type="button" class="button_nav" id="plw" value="PlayLoopW" onclick="">
+	<input type="button" class="button_nav" id="pss" value="Stop" onclick="">
+	<input type="number" class="number_nav" id="bpm" min="10" max="500" step="0.01" value="60">
+	<label class="label_nav">BpM</label>
+</div>
+
+<div class="header_nav_div" id="Instrumentdiv">	
+	<label class="label_nav_bold">Instrument:</label>
+	<select class="select_nav" id="actualInstrument"></select>
+	Mute
+	<input type="checkbox" id="actualInstrument_m">
+	Hide
+	<input type="checkbox" id="visibleInstr">
+	<select class="select_nav" id="actualInstrument_w">
+		<option value="sine">sine</option>
+		<option value="square">square</option>
+		<option value="sawtooth">sawtooth</option>
+		<option value="triangle">triangle</option>
+	</select>
+	<input type="button" class="button_nav" id="pfieldsbtn" value="P-fields" onclick="showHidePfields()" title="open csound pfields menu">
+</div>
+
+
+
+<div id="pfields">
+<!--pfield div for additional csound parameters manipulation-->
+</div>
+
+
+
+<div class="header_nav_div">
+	<!--label class="label_nav_bold">View:</label-->
+	<input type="button" class="button_nav" id="bwdbwd" value="<<" onclick="fwdBwdBeat(-2)">
+	<input type="button" class="button_nav" id="bwd" value="<" onclick="fwdBwdBeat(-1)">
+	<input type="button" class="button_nav" id="upup" value="^Oct" onclick="upDownKeys(2)">
+	<input type="button" class="button_nav" id="up" value="^" onclick="upDownKeys(1)">
+	<input type="button" class="button_nav" id="centervisiblebtn" value="Center" onclick="centervisible()">
+	<input type="button" class="button_nav" id="down" value="v" onclick="upDownKeys(-1)">
+	<input type="button" class="button_nav" id="downdown" value="vOct" onclick="upDownKeys(-2)">
+	<input type="button" class="button_nav" id="fwd" value=">" onclick="fwdBwdBeat(1)">
+	<input type="button" class="button_nav" id="fwdfwd" value=">>" onclick="fwdBwdBeat(2)">
+	<input type="button" class="button_nav" id="zit" value="TZ+" onclick="zoomTime(-1)" title="zoom in time">
+	<input type="button" class="button_nav" id="zot" value="TZ-" onclick="zoomTime(1)" title="zoom out time">
+	<input type="button" class="button_nav" id="zik" value="NZ+" onclick="zoomKeys(-1)" title="zoom in notes">
+	<input type="button" class="button_nav" id="zok" value="NZ-" onclick="zoomKeys(1)" title="zoom out notes">
+	<br><br>
+</div><br>
+<div id="can">
+	<canvas id="pianoRoll"></canvas>
+	<canvas id="timeDivision"></canvas>
+	<canvas id="notesCanvas"></canvas>
+	<canvas id="timeScroll"></canvas>
+</div>
+
+
+
+<script src="js/graphic.js" type="text/javascript"></script>
+<script src="js/saveload.js" type="text/javascript"></script>
+<script src="js/cspfields.js" type="text/javascript"></script>
+<script src="js/audioengine.js" type="text/javascript"></script>
+<script>
+
+
+
+
+//General
+var minFreq = 8.1758;
+var maxFreq = 20000;
+
+
+//Piano roll Canvas
+	//position
+var left_at = findTopLeft("pianoRoll")[0];
+var top_at = findTopLeft("pianoRoll")[1];
+
+var c_pr = document.getElementById("pianoRoll");
+var ctx_pr = c_pr.getContext("2d");
+var canvasW = 800;
+var canvasH = 600;
+c_pr.width = canvasW;
+c_pr.height = canvasH;
+//Time canvas
+var c_ti = document.getElementById("timeDivision");
+var ctx_ti = c_ti.getContext("2d");
+c_ti.width = canvasW;
+c_ti.height = canvasH;
+//Notes canvas
+var c_no = document.getElementById("notesCanvas");
+var ctx_no = c_no.getContext("2d");
+c_no.width = canvasW;
+c_no.height = canvasH;
+//time scroll
+
+var c_ts = document.getElementById("timeScroll");
+var ctx_ts = c_ts.getContext("2d");
+c_ts.width = canvasW;
+c_ts.height = canvasH;
+
+
+
+//TIMING
+var timeMultiplier = 2.0;
+
+
+
+
+//Keys
+//Tuning
+var notesOctave_ = 12;
+var octaveMultiplier_ = 2.0;
+var	ratios = calculateTuning(notesOctave_, octaveMultiplier_);
+var	frequencies = calculateFrequencies(ratios, minFreq, maxFreq, notesOctave_, octaveMultiplier_);
+
+//Drawing
+var keysW = 100;//keys width
+var keysN = 72;// number of keys on screen
+var keysLowest = 24;//index of the lowest key to be displayed
+var drawYOffset = 0.5 * canvasH / keysN
+
+//Beats
+var firstBeat = 0;//leftmost beat
+var divBeat = 1;//quantization
+var beatN = 16;//number of beats on the screen
+var beatW = 100;//beat width
+
+
+//Score objects
+var score = new Array();//complete score
+var score_visible = new Array();//only visible score notes
+var score_buffer = new Array();//array for copy cut paste notes
+var last_note_i = 0;//index for score array of last note selected or added
+var error = canvasH / keysN / 1.5;//touch or mouse position error
+
+
+//Menu manager
+var viste = ["File", "Edit", "Tuning", "Time", "Play", "Instrument"];
+
+function openArgument(value){
+    /*toggle divs views*/
+	for (var div = 0; div < viste.length; div++){
+		if (viste[div]==value){
+			document.getElementById(viste[div] + "div").style.display = "block";
+		} else{
+			document.getElementById(viste[div] + "div").style.display = "none";
+		}
+	}
+	document.getElementById("pfields").style.display = "none";
+	onResaiz();
+}
+
+
+
+
+
+
+
+function updateKeyVals() {
+//recalculate actual frequencies
+	if (document.getElementById("notesOctave").value != null ){
+		notesOctave_ = document.getElementById("notesOctave").valueAsNumber;
+	}
+	if (document.getElementById("octaveMultiplier").value != null ){
+		octaveMultiplier_ = document.getElementById("octaveMultiplier").valueAsNumber;
+	}
+	if (document.getElementById("CFrequency").value != null ){
+		minFreq = document.getElementById("CFrequency").valueAsNumber;
+	}
+	
+	ratios = calculateTuning(notesOctave_, octaveMultiplier_);
+	frequencies = calculateFrequencies(ratios, minFreq, maxFreq, notesOctave_, octaveMultiplier_);
+	drawKeys(ctx_pr, notesOctave_, frequencies);
+	drawNotes();
+	
+}
+
+
+
+function calculateTuning(notesOctave_, octaveMultiplier_){
+//create an array of frequency ratios
+	var ratios = [];
+	//moltiplication factors
+	co=0;
+	while (co<notesOctave_){
+		//multip = (octaveMultiplier_ ** co)**(1.0 / notesOctave_);
+		multip = Math.pow(Math.pow(octaveMultiplier_ , co), 1.0 / notesOctave_);
+		co++;
+		//console.log(multip);
+		ratios.push(multip);
+	}
+	return ratios;
+}
+
+
+function calculateFrequencies(ratios, minFreq, maxFreq, notesOctave_, octaveMultiplier_){
+//create an array of frequency ratios
+	var frequencies = [];
+	//console.log(minFreq);
+	fr = minFreq;
+	frb = minFreq;
+	coFr = 0; 
+	while (fr <= maxFreq) {
+		indFr = coFr % notesOctave_
+		if (indFr == 0){
+			frb = minFreq * octaveMultiplier_ ** (coFr / notesOctave_);
+			fr = frb;
+		} else {
+			multipfr = ratios[coFr % notesOctave_];
+			fr = frb * multipfr;
+		}
+		frequencies.push(fr);
+		//console.log(fr);
+		coFr++;
+	}
+	return frequencies
+}
+
+
+
+var stdFreq = calculateFrequencies(calculateTuning(12.0, 2.0), 8.1758, maxFreq, 12.0, 2.0);
+//console.log(stdFreq);
+
+
+
+//INSTRUMENTS DEFINITIONS
+
+var kelly_colors = ['222222', 'F3C300', '875692', 'F38400', 'A1CAF1', 'BE0032', 'C2B280', '848482', '008856', 'E68FAC', '0067A5', 'F99379', '604E97', 'F6A600', 'B3446C', 'DCD300', '882D17', '8DB600', '654522', 'E25822', '2B3D26']
+
+//Create array for instrument waveshape and mute
+var instrWaveMute = new Array();//0 waveform, 1 muteunmute, 3 notestructure
+instrWaveMute.push(["sine", 0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],0]);
+for (var instrWMi = 1; instrWMi < kelly_colors.length; instrWMi++) {
+	instrWaveMute.push(["sine", 0]);
+}
+
+
+
+var select = document.getElementById('actualInstrument');
+for (var ciai=1; ciai < kelly_colors.length; ciai++){
+	var opt = document.createElement('option');
+	opt.value = ciai;
+	opt.innerHTML = ciai;
+	opt.classList.add("#"+kelly_colors[ciai]);
+	select.appendChild(opt);
+	var currnotei = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	/*
+	Aggiungere:
+	
+	drawTimeStart,
+	
+	var e = document.getElementById("divBeat");
+	var qvalue_ = e.options[e.selectedIndex].value;
+	var qvalue = timeMultippp[qvalue_]; 
+	
+	timeMultiplier
+	
+	*/
+	instrWaveMute[ciai].push(currnotei);
+	
+	//visibility - not saved
+	instrWaveMute[ciai].push(0);
+	
+}
+
+
+//console.log(instrWaveMute);
+
+var currnote = instrWaveMute[0][2];//modified in cspfields.js
+//console.log(currnote);
+
+
+
+
+//TIMEDIVISORS
+var timeratiosE = [0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,	0.0,
+					-1.0,   -1.0,	-1.0,	 -1.0,	-1.0,	-1.0,	-1.0,	-1.0,	-1.0,	-1.0,	-1.0,	-1.0,	0.0,	-1.0,	-1.0,	-1.0,
+					-2.0,   -2.0,	-2.0,	 -2.0,	-2.0,	-2.0,	-2.0,	-2.0,	-2.0,	-2.0,	-2.0,	-2.0,	-2.0,	-2.0,	-2.0,	-2.0,
+					-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,	-3.0,
+					-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,	-4.0,]
+var timeratiosM = [1.0,	1.0/2,	1.0/3,	1.0/4,	1.0/5,	1.0/6,	1.0/7,	1.0/8,	1.0/9, 1.0/10, 1.0/11, 1.0/12, 1.0/13, 1.0/14, 1.0/15, 1.0/16,
+					1.0,	1.0/2,	1.0/3,	1.0/4,	1.0/5,	1.0/4, 	1.0/7,	1.0/8,	1.0/9, 1.0/10, 1.0/11, 1.0/12, 1.0/13, 1.0/14, 1.0/15, 1.0/16,
+					1.0,    1.0/2,	1.0/3,	1.0/4,	1.0/5,	1.0/4, 	1.0/7,	1.0/8,	1.0/9, 1.0/10, 1.0/11, 1.0/12, 1.0/13, 1.0/14, 1.0/15, 1.0/16,
+					1.0,	1.0/2,	1.0/3,	1.0/4,	1.0/5,	1.0/4, 	1.0/7,	1.0/8,	1.0/9, 1.0/10, 1.0/11, 1.0/12, 1.0/13, 1.0/14, 1.0/15, 1.0/16,
+					1.0,	1.0/2,	1.0/3,	1.0/4,	1.0/5,	1.0/4, 	1.0/7,	1.0/8,	1.0/9, 1.0/10, 1.0/11,  1.0/12, 1.0/13, 1.0/14, 1.0/15, 1.0/16]
+var beatDefss =   ["1",	"1/2",	"1/3",	"1/4",	"1/5",	"1/6",	"1/7",	"1/8",	"1/9", "1/10",  "1/11", "1/12", "1/13", "1/14", "1/15", "1/16", 
+					"1/8", "1/8/2", "1/8/3", "1/8/4","1/8/5","1/8/6","1/8/7","1/8/8","1/8/9", "1/8/10",  "1/8/11", "1/8/12", "1/8/13", "1/8/14", "1/8/15", "1/8/16",
+					"1/16", "1/16/2", "1/16/3", "1/16/4","1/16/5","1/16/6","1/16/7","1/16/8","1/16/9", "1/16/10",  "1/16/11", "1/16/12", "1/16/13", "1/16/14", "1/16/15", "1/16/16",
+					"1/32", "1/32/2", "1/32/3", "1/32/4","1/32/5","1/32/6","1/32/7","1/32/8","1/32/9", "1/32/10",  "1/32/11", "1/32/12", "1/32/13", "1/32/14", "1/32/15", "1/32/16",
+					"1/64", "1/64/2", "1/64/3", "1/64/4","1/64/5","1/64/6","1/64/7","1/64/8","1/64/9", "1/64/10",  "1/64/11", "1/64/12", "1/64/13", "1/64/14", "1/64/15", "1/64/16"]	
+var timeMultippp = new Array();
+
+
+//create select times for beat division
+var selectTT = document.getElementById('divBeat');
+for (var ciai=0; ciai < beatDefss.length; ciai++){
+	var opt = document.createElement('option');
+	opt.value = ciai;//access timeMultippp by index
+	opt.innerHTML = beatDefss[ciai];
+	if (timeratiosM[ciai] == 1.0) {//only for integer division
+		opt.style.color = "red";
+	}
+	
+	selectTT.appendChild(opt);
+}
+
+
+
+
+function settimeMultipRatio(value) {
+	timeMultiplier = parseFloat(value);
+	//console.log(timeMultiplier);
+	timeMultipRatio();
+}
+
+function timeMultipRatio() {
+	//see timeratios definition
+	timeMultippp = [];
+	var multii = 0.0;
+	for (var ctt = 0; ctt < beatDefss.length; ctt++){
+		multii = timeratiosM[ctt] * Math.pow(timeMultiplier, timeratiosE[ctt]);
+		timeMultippp.push(multii);
+	}
+	drawTime();
+}
+timeMultipRatio();
+
+
+
+//Bind Events Bind Events Bind Events Bind Events Bind Events Bind Events Bind Events Bind Events
+//Redraw when resized
+window.addEventListener("resize", onResaiz);
+//Redraw when changing tuning
+document.getElementById("notesOctave").addEventListener('change', updateKeyVals);
+document.getElementById("octaveMultiplier").addEventListener('change', updateKeyVals);
+document.getElementById("CFrequency").addEventListener('change', updateKeyVals);
+document.getElementById("divBeat").addEventListener('change', drawTime);
+document.getElementById("divBeatStart").addEventListener('change', setdrawTimeStart);
+
+//instrument Change / color
+instrumentColor();
+document.getElementById("actualInstrument").addEventListener('change', changeInstr, {passive: true});
+document.getElementById("actualInstrument_w").addEventListener('change', waveInstr);
+document.getElementById("actualInstrument_m").addEventListener('change', muteInstr);
+document.getElementById("visibleInstr").addEventListener('change', hideInstr);
+//MouseEvents on canvas
+document.getElementById("notesCanvas").addEventListener('mousedown', mouseClick);
+document.getElementById("notesCanvas").addEventListener('mouseup', noteEnd);
+document.getElementById("notesCanvas").addEventListener('mouseout', noteInterr);
+document.getElementById("notesCanvas").addEventListener('mousemove', mouseOverIP);
+//touch events
+function touchHandler(event) { 
+    var touches = event.changedTouches, first = touches[0], type = ""; 
+    switch(event.type) { 
+         case "touchstart": type = "mousedown"; break; 
+         case "touchmove": type = "mousemove"; break; 
+         case "touchend": type = "mouseup"; break; default: return;
+     } 
+    // initMouseEvent(type, canBubble, cancelable, view, clickCount, 
+    // screenX, screenY, clientX, clientY, ctrlKey, 
+    // altKey, shiftKey, metaKey, button, relatedTarget); 
+    var simulatedEvent = document.createEvent("MouseEvent"); 
+    simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY, false, false, false, false, 0/*left*/, null); 
+     first.target.dispatchEvent(simulatedEvent); 
+     event.preventDefault(); 
+} 
+//function init() { 
+document.getElementById("notesCanvas").addEventListener("touchstart", touchHandler, true); 
+document.getElementById("notesCanvas").addEventListener("touchmove", touchHandler, true); 
+document.getElementById("notesCanvas").addEventListener("touchend", touchHandler, true); 
+document.getElementById("notesCanvas").addEventListener("touchcancel", touchHandler, true); 
+
+//Key events
+document.onkeydown = function(e) {
+  if (e.shiftKey && e.which == 39) {
+	fwdBwdBeat(2);
+  } else if (e.which == 39) {
+    fwdBwdBeat(1);
+  } else if (e.shiftKey && e.which == 37) {
+	fwdBwdBeat(-2);
+  } else if (e.which == 37) {
+	fwdBwdBeat(-1);
+  } else if (e.shiftKey && e.which == 38) {
+	upDownKeys(2);
+  } else if (e.which == 38) {
+	upDownKeys(1);
+  } else if (e.shiftKey && e.which == 40) {
+	upDownKeys(-2);
+  } else if (e.which == 40) {
+	upDownKeys(-1);
+  }
+};
+
+
+
+
+
+//Additional Pfields for csound
+function showHidePfields() {
+  var x = document.getElementById("pfields");
+  if (x.style.display === "none") {
+    x.style.display = "inline-grid";
+  } else {
+    x.style.display = "none";
+  }
+  //resize and redraw canvas
+  onResaiz();
+}
+
+
+var pfieldsdiv = document.getElementById('pfields');
+
+var pfff = ['Additional p-fields for Csound', 'P4 : volume', 'P5 : frequency'];
+
+for (var pffff = 0; pffff < pfff.length;pffff++) {
+	var ci = document.createElement("div");
+	ci.setAttribute("class", 'controls-item');
+	txt = document.createTextNode(pfff[pffff]);
+	ci.appendChild(txt);
+	pfieldsdiv.appendChild(ci);
+	
+}
+
+
+/*
+//single instrument pfield button
+var ci = document.createElement("div");
+var spfb = document.createElement("input");
+spfb.setAttribute("type", "button");
+spfb.setAttribute("id", 'singlepfdef');
+spfb.setAttribute("value", "All");
+spfb.setAttribute("onclick", "singleEvtPf()");
+ci.appendChild(spfb);
+pfieldsdiv.appendChild(ci);
+*/
+
+
+
+for (var pfc=6; pfc <= 16; pfc++){
+	var ci = document.createElement("div");
+	ci.setAttribute("class", 'controls-item');
+	//
+	var txt = document.createTextNode('P'+pfc.toString());
+	ci.appendChild(txt);
+	//checkbox
+	var ckb = document.createElement("input");
+	ckb.setAttribute("type", "checkbox");
+	ckb.setAttribute("id", 'validPf'+pfc.toString());
+	ckb.setAttribute("value", "default");
+	ckb.setAttribute("onclick", "additionalPfields(id)");
+	ci.appendChild(ckb);
+	//
+	var br = document.createElement("br");
+	ci.appendChild(br);
+	//copy value to all button
+	var copybuttpf = document.createElement("input");
+	copybuttpf.setAttribute("type", "button");
+	copybuttpf.setAttribute("id", 'copybuttAPf'+pfc.toString());
+	copybuttpf.setAttribute("class", "copybuttonPf");
+	copybuttpf.setAttribute("value", "toAll");
+	copybuttpf.setAttribute("onclick", "copyButtPfield(id, 1)");
+	ci.appendChild(copybuttpf);
+
+	//copy value to selected button
+	var copybuttpf = document.createElement("input");
+	copybuttpf.setAttribute("type", "button");
+	copybuttpf.setAttribute("id", 'copybuttSPf'+pfc.toString());
+	copybuttpf.setAttribute("class", "copybuttonPf");
+	copybuttpf.setAttribute("value", "toSel");
+	copybuttpf.setAttribute("onclick", "copyButtPfield(id, 0)");
+	ci.appendChild(copybuttpf);
+
+	//value
+	var inp = document.createElement("input");
+	inp.setAttribute("type", "number");
+	inp.setAttribute("id", 'Pf'+pfc.toString());
+	inp.setAttribute("value", 0.0);
+	inp.setAttribute("step", "any");
+	inp.setAttribute("onchange", "updPfValue(id)");
+	
+	ci.appendChild(inp);
+	pfieldsdiv.appendChild(ci);
+	
+}
+
+
+
+
+
+//Initialize
+//showHidePfields();
+openArgument("Instrument");
+onResaiz();
+updateKeyVals();
+drawTime(ctx_ti, divBeat);
+
+</script>
+</body>
+</html>

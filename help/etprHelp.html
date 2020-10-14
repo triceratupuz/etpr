@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ETPR Help</title>
+<link rel="stylesheet" type="text/css" href="../css/etpr.css">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<h1>Equally Tempered Piano Roll instructions/help</h1>
+
+
+<h2>General Info</h2>
+
+Developed by <a href="http://www.triceratupuz.altervista.org/" target="_blank">Triceratupuz Lab</a><br><br>
+This software has been developed to compose music in equally tempered intonation and with strange temporal division (if desired).<br>
+It was created to facilitate the creation of csound scores so the files can be used to render compositions bearing in mind that: p4 is used for volume (normalized between 0-1) and p5 for frequency.
+Additional p-fields (6 to 16) can be used, if required.<br>
+A preview of the score can be heard by mean of the web audio api thus is not necessary to have csound installed.<br>
+<br>
+A note has an L shape, vertical line represents volume, horizontal its time duration<br>
+Each editing point of horizontal line is shown as a circle (begin and end), click and drag on those to edit relevant properties (move or note length).<br>
+At the top end of vertical line there is a small arrow, more pointed means more volume, click and drag on the arrow to edit the volume or delete note (if volume is dragged to 0 or below).<br>
+
+<br><br><h2>Limitations</h2> 
+Works on Chrome/Chromium, browser must be allowed to reproduce audio and to access local files.<br>
+Available instruments are limited from 1 to 20.<br>
+Reproduction does not allow to set envelopes (a fixed ADSR) nor user defined timbre (only defined waveshapes).<br>
+Additional cround p-fields are limited fo 10 (from 6 to 16).<br>
+When selecting a note with a different tuning the display is messed, just press "Center" button.<br>
+Files are saved in the browser defines download directory.<br>
+
+
+<br><br><h2>Menu</h2> 
+<b>Actual File</b>: diplay the name of the file in use (empty can be considered as new file)<br>
+<b>File</b>: to load and save files<br>
+<b>Edit</b>: to copy/cut/paste/select/deselect notes<br>
+<b>Tuning</b>: to set the current equally tempered tuning<br>
+<b>Time</b>: to set the time division<br>
+<b>Play</b>: To play the score in the browser<br>
+<b>Instrument</b>: to select and edit instruments<br>
+
+
+<br><br><h2>Navigation Bar</h2> 
+To move along the score there are the following buttons:<br>
+<b><<</b>: move left (time) of one window<br>
+<b><</b>: move left (time) of one step<br>
+<b>^Oct</b>: move up (note) of one octave<br>
+<b>^</b>: move up (note) of one note<br>
+<b>Center</b>: center the view notewise<br>
+<b>v</b>: move down (note) of one note<br>
+<b>vOct</b>: move down (note) of one octave<br>
+<b>></b>: move right (time) of one step<br>
+<b>>></b>: move right of one window<br>
+<b>TZ+</b>: zoom in of time<br>
+<b>TZ-</b>: zoom out of time<br>
+<b>NZ+</b>: zoom in of notes<br>
+<b>NZ-</b>: zoom out of notes<br>
+
+
+<br><br><h2>How To</h2> 
+<b>To Add a note</b>: click, drag along length and release on an empty space<br>
+<b>To Delete a note by lenght</b>: click on note end handle, keep click down and drag before note begin handle then release<br>
+<b>To Delete a note by volume</b>: click on volume handle, keep click down and drag below note begin handle then release<br>
+<b>To change length to a note</b>: click and drag note end handle then release<br>
+<b>To change volume to a note</b>: click and drag volume handle then release<br>
+<b>To move a note</b>: click and drag note begin handle then release<br>
+<b>To select a note</b>: click no the line between starting and end point, selecting a note automatically set the timing and tuning data used to create it<br>
+<br><b>IMPORTANT</b>: a note can be edited only if it's of actual instrument<br>
+
+
+<br><br><h2>Equal temperament</h2> 
+Choosen tuning is shown as horizontal lines in the piano roll.
+<br>Is possible to set any equally tempered tuning by changing:
+<br>Number of notes in octave (12 chromatic is the standard), 
+<br>Octave multiplier (2 is the standard for frequancy ratios)
+<br>Lowest frequency (8.175...Hz so on is the low standard C frequency for a 440 Hz A note)
+<br>Each note could be set to a different tuning, if you are adventurous enough.
+<br>Standard Tuning (12 notes, octave frequency ratio of 2, low C at 8.175Hz) is always displayed for reference with little 
+horizontal marks (red C, the rest as black and white as piano keys) close to the frequency values on the left of piano roll. 
+
+<br><br><h2>Temporal dvision</h2>
+Note positioning and duration can be quantized or not checkbox near division value.
+<br>Quantization is shown as vertical lines in the piano roll, reference beats (1/4) are always shown
+<br>The start tof the grid can be changed (for reference) at beginning of the score, beginning of selected note or end of selected note.
+
+<br>Division dropdown menu show some notes duration in red and some in black:<br>
+Red division are affected by time base<br>
+Black notes duration are just the fraction of the red note (hence the /2, /3, /4,... at the end)<br>
+
+<br>For example: standard division (time base) is 2 so:
+<br>1/8 => 1/(2^1)=0.5
+<br>1/16 => 1/(2^2) = 0.25
+<br>1/32 => 1/(2^3) = 0.125
+<br>1/64 => 1/(2^4) = 0.0625
+<br><br>If the time base is changed the number set is used in calculation and displayed on the grid:
+<br>if 3.1 
+<br>1/8 => 1/(3.1^1)
+<br>1/16 => 1/(3.1^2)
+<br>...
+
+<br><br><h2>Instruments</h2> 
+Each instrument could be muted and assigned to a waveform.<br>
+P-fields can be used if the saved score is used for Csound rendering, 11 additional pfields are allowed.
+
+<br><br><h2>Load Save</h2> 
+Scores can be loaded and saved and are inplain txt format compatible with Csound
+
+
+</body>
+</html>
